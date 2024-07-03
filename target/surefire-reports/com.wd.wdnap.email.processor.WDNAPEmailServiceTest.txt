@@ -1,0 +1,14 @@
+-------------------------------------------------------------------------------
+Test set: com.wd.wdnap.email.processor.WDNAPEmailServiceTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.001 sec <<< FAILURE! - in com.wd.wdnap.email.processor.WDNAPEmailServiceTest
+testPerform(com.wd.wdnap.email.processor.WDNAPEmailServiceTest)  Time elapsed: 0.001 sec  <<< ERROR!
+java.lang.NullPointerException: null
+	at java.base/java.util.concurrent.ConcurrentHashMap.putVal(ConcurrentHashMap.java:1011)
+	at java.base/java.util.concurrent.ConcurrentHashMap.put(ConcurrentHashMap.java:1006)
+	at java.base/java.util.Properties.put(Properties.java:1301)
+	at com.wd.wdnap.utils.Util.loadKafkaProperties(Util.java:75)
+	at com.wd.code.cnap.kafka.WDNAPKafkaProducer.<init>(WDNAPKafkaProducer.java:29)
+	at com.wd.wdnap.email.service.WDNAPEmailService.<init>(WDNAPEmailService.java:49)
+	at com.wd.wdnap.email.processor.WDNAPEmailServiceTest.setUp(WDNAPEmailServiceTest.java:19)
+

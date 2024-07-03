@@ -1,0 +1,73 @@
+spring:
+  profiles.active: dev
+---
+spring:
+  profiles: dev
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+application:
+  decryptionKey: dev
+  host: mail.cisco.com
+  #host: chain-prd-02.cisco.com
+  #idServiceURL: http://localhost:8080/cnap/getid?from=
+  #toServiceURL : http://localhost:8080/cnap/gettoaddresses
+  #subjectUUIDServiceURL: http://localhost:8080/cnap/getsubid?subject=
+  idServiceURL: http://clip-prod-98:8085/cnap/getid?from=
+  toServiceURL : http://clip-prod-98:8085/cnap/gettoaddresses
+  subjectUUIDServiceURL: http://clip-prod-98:8085/cnap/getsubid?subject=
+  kafkaBootstrapServers : clip-prod-121:9092
+  kafkaConsumerBootstrapServers : clip-prod-121:9092
+  kafkaADBootstrapServers : messaging-rcdn.cisco.com:9093
+  mailStoreType: IMAP
+  username: cnap.gen
+  password: S1yx5srNZTufJzDqbB2gJ4wvs3IIRZc4
+  mailExchURL: https://mail.cisco.com/ews/Exchange.asmx
+  mailExchPWD: chain123
+  mailExchDomain: cisco.com
+  monitorMailSub: TEST CNAP MAILBOX WITH ID 77777
+---
+spring:
+  profiles: stage
+application:
+  decryptionKey: stage
+  host: mail.cisco.com
+  idServiceURL: http://clip-stg-02:8080/cnap/getid?from=
+  toServiceURL : http://clip-stg-02:8080/cnap/gettoaddresses
+  subjectUUIDServiceURL: http://clip-stg-02:8080/cnap/getsubid?subject=
+  kafkaBootstrapServers : chain-prd-02:9092
+  kafkaConsumerBootstrapServers : clip-prod-121:9092
+  mailStoreType: pop3
+  username: cnap.gen
+  password: zc1uLvz4INKQ85mHwm17Y51nyediZtz+
+logging:
+  config: classpath:logback.xml
+  path: C:\\Bala\\cnap
+  file: service.log
+  pattern:
+      console: "%d %-5level %logger : %msg%n"
+      file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+      com.cisco.cnap: INFO
+---
+spring:
+  profiles: prod
+application:
+  decryptionKey: prod
+  host: mail.cisco.com
+  idServiceURL: http://clip-stg-02:8090/cnap/getid?from=
+  toServiceURL : http://clip-stg-02:8090/cnap/gettoaddresses
+  subjectUUIDServiceURL: http://clip-stg-02:8090/cnap/getsubid?subject=
+  kafkaBootstrapServers : clip-prod-100:9092
+  kafkaConsumerBootstrapServers : clip-prod-121:9092
+  mailStoreType: pop3
+  username: cnap.gen
+  password: cile8+S8HoYmK8r01yVtqPEYKDoIMZT4
+logging:
+  config: classpath:logback.xml
+  path: C:\\Bala\\cnap
+  file: service.log
+  pattern:
+      console: "%d %-5level %logger : %msg%n"
+      file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+      com.cisco.cnap: INFO
