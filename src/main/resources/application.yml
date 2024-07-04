@@ -8,7 +8,7 @@ spring:
 application:
   decryptionKey: dev
   host: mail.wd.com
-  #host: chain-prd-02.cisco.com
+  #host: chain-prd-02.cisco.com 
   #idServiceURL: http://localhost:8080/cnap/getid?from=
   #toServiceURL : http://localhost:8080/cnap/gettoaddresses
   #subjectUUIDServiceURL: http://localhost:8080/cnap/getsubid?subject=
