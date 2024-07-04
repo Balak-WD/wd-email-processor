@@ -7,7 +7,7 @@ spring:
     exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
 application:
   decryptionKey: dev
-  host: mail.cisco.com
+  host: mail.wd.com
   #host: chain-prd-02.cisco.com
   #idServiceURL: http://localhost:8080/cnap/getid?from=
   #toServiceURL : http://localhost:8080/cnap/gettoaddresses
