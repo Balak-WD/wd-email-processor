@@ -10,16 +10,22 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * @author shrdeshp
  *
  */
+@Service
 public class Util {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
 	private static final String SECURITY_FILE_PATH = System.getProperty("secfilepath");
-	
+
+	@Value("application.kafkaBootstrapServers")
+	public  String bootstrapServers;
 
 	private Util() {
 		super();
@@ -51,7 +57,7 @@ public class Util {
 
 
 
-	public static Properties loadEmailProperties(String pop3Host){
+	public  Properties loadEmailProperties(String pop3Host){
 		// create properties field
 		Properties properties = new Properties();
 		System.setProperty("javax.net.ssl.trustStore",SECURITY_FILE_PATH+"jssecacerts");
@@ -69,7 +75,7 @@ public class Util {
 	}
 
 
-	public static Properties loadKafkaProperties(String bootstrapServers){
+	public  Properties loadKafkaProperties(){
 
 		Properties properties = new Properties();
 		properties.put("bootstrap.servers", bootstrapServers);

@@ -13,33 +13,33 @@ import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
 import microsoft.exchange.webservices.data.credential.WebCredentials;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 //@Service
 public class WDNAPEmailEWSService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(WDNAPEmailEWSService.class);
 	private static ExchangeService service;
-	private ApplicationConfigParams config;
+
+	@Autowired
 	private WDNAPKafkaProducer kp = null;
+
+	@Value("${application.username}")
 	private String username;
+	@Value("${application.password}")
 	private String password;
+
+	@Value("${application.mailExchURL}")
 	private String url;
+
+	@Value("${application.mailExchDomain}")
 	private String domain;
 	private EWSMailUtil mailUtil;
 	
 	
-	public WDNAPEmailEWSService(ApplicationConfigParams config) {
+	public WDNAPEmailEWSService() {
 			
-			this.config = config;
-			
-			if(kp == null)
-				kp = new WDNAPKafkaProducer(config);
-			
-			this.username = config.getUsername();
-			this.password = config.getMailExchPWD();
-			this.url = config.getMailExchURL();
-			this.domain = config.getMailExchDomain();
-
 			try{
 				service = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
 				service.setUrl(new URI(this.url));
@@ -60,7 +60,7 @@ public class WDNAPEmailEWSService {
 	
 	public void fetchEmails(){
 		//mailUtil.readEmails();
-		mailUtil.processEmails(kp,config);
+		mailUtil.processEmails(kp);
 	}
 	
 	

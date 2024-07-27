@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableScheduling
-@ComponentScan({ "com.wd.wdnap.email.tasks", "com.wd.wdnap.config","com.wd.wdnap.email.service" })
+@ComponentScan({ "com.wd.wdnap.email.tasks", "com.wd.wdnap.email.service","com.wd.code.cnap.kafka","com.wd.wdnap.utils" })
 public class Application  {
 
 	
@@ -25,7 +25,7 @@ public class Application  {
 	public static void main(String[] args) {
 		LOGGER.info("Startng the Application");
 		try {
-			SpringApplication.run(new Object[]{Application.class}, args);
+			SpringApplication.run(Application.class, args);
 		}catch (Exception e){
 			LOGGER.info("BALA");
 			e.printStackTrace();

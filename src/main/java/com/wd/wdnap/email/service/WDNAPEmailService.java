@@ -20,6 +20,8 @@ import javax.mail.Store;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.wd.wdnap.config.ApplicationConfigParams;
@@ -31,30 +33,41 @@ import com.wd.code.cnap.kafka.WDNAPKafkaProducer;
 
 @Service
 public class WDNAPEmailService {
-	private EWSMailUtil mailUtil;
-	private ApplicationConfigParams config;
 
+
+	private EWSMailUtil mailUtil;
+
+	@Autowired
+	public Util util;
+
+
+	@Value("${application.host}")
 	private String host;
+	@Value("${application.username}")
 	private String username;
+	@Value("${application.password}")
 	private String password;
+	@Value("${application.mailStoreType}")
 	private String mailStoreType;
 	private int threadIdCounter = 1;
+
 	private String folder=null;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WDNAPEmailService.class);
-	WDNAPKafkaProducer kp = null;
+
+	@Autowired
+	WDNAPKafkaProducer kp;
+
+	public WDNAPEmailService(){
+
+	}
 
 	public WDNAPEmailService(ApplicationConfigParams applicationConfigParams) {
-		config = applicationConfigParams;
-		kp = new WDNAPKafkaProducer(config);
+		//Skp = new WDNAPKafkaProducer(config);
 		folder = System.getProperty("Folder");
 	}
 
 	public void initAndFetch() {
-		host = config.getHost();
-		mailStoreType = config.getMailStoreType();
-		username = config.getUsername();
-		password = config.getPassword();
 		fetchMail(host, mailStoreType, username, password);
 	}
 
@@ -63,7 +76,7 @@ public class WDNAPEmailService {
 			LOGGER.info("CNAPEmailService  - fetch");
 
 			// load the properties
-			Properties properties = Util.loadEmailProperties(pop3Host);
+			Properties properties = util.loadEmailProperties(pop3Host);
 
 			// establish the session
 			Session emailSession = Session.getDefaultInstance(properties);
@@ -110,7 +123,7 @@ public class WDNAPEmailService {
 
 				WDNAPMailNotificationObject cnapMessage = MailUtil.getCNAPObjectFromMessage(message);
 
-				kp.publish(cnapMessage, config);
+				kp.publish(cnapMessage);
 				// TODO:find way to callback and delete on receive success
 				if (!message.isSet(Flags.Flag.DELETED)) {
 					// cnapFolder.appendMessages(new Message[] {message});
@@ -188,7 +201,7 @@ public class WDNAPEmailService {
 				for (int i = 1; i <= THREAD_COUNT; i++) {
 					// executors.add(new ImapsMailBoxExecutor(emailFolder, kp,
 					// config, threadIdCounter++));
-					executors.add(new ImapsMailBoxExecutor(emailFolder, kp, config, i));
+					executors.add(new ImapsMailBoxExecutor(emailFolder, kp, i));
 				}
 
 				List<Future<Boolean>> futures = threadPool.invokeAll(executors);
@@ -230,15 +243,13 @@ public class WDNAPEmailService {
 
 	private class ImapsMailBoxExecutor implements Callable<Boolean> {
 		WDNAPKafkaProducer producer;
-		ApplicationConfigParams confParams;
-		private final int myThreadId;
+	   private final int myThreadId;
 		Folder emailFolder;
 
 		public ImapsMailBoxExecutor(Folder folder, WDNAPKafkaProducer kafkaProducer,
-				ApplicationConfigParams configParams, int threadId) {
+				 int threadId) {
 			this.emailFolder = folder;
 			this.producer = kafkaProducer;
-			this.confParams = configParams;
 			this.myThreadId = threadId;
 		}
 
@@ -246,7 +257,7 @@ public class WDNAPEmailService {
 		public Boolean call() {
 			try {
 				WDNAPMailNotificationObject message = getNextCnapMail();
-				producer.publish(message, confParams, myThreadId);
+				producer.publish(message, myThreadId);
 
 			} catch (Exception ex) {
 				LOGGER.error("Exception at thread :", ex);

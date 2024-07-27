@@ -9,7 +9,12 @@ import org.slf4j.LoggerFactory;
 import com.wd.wdnap.config.ApplicationConfigParams;
 import com.wd.wdnap.email.pojo.WDNAPMailNotificationObject;
 import com.wd.wdnap.utils.Util;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+@Service
 public class WDNAPKafkaProducer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WDNAPKafkaProducer.class);
@@ -21,20 +26,29 @@ public class WDNAPKafkaProducer {
 	Producer<String, String> producer = null;
 	ProducerRecord<String, String> record = null;
 
-	public WDNAPKafkaProducer(ApplicationConfigParams config) {
-		// props1 =
-		// Util.loadKafkaProperties(config.getKafkaADBootstrapServers());
-		// producer1 = new KafkaProducer<>(props1);
+	@Autowired
+	public Util util;
 
-		props = Util.loadKafkaProperties(config.getKafkaBootstrapServers());
+	@Value("${application.idServiceURL}")
+	public String idServiceURL;
+
+	@Value("${application.subjectUUIDServiceURL}")
+	public String subjectUUIDServiceURL;
+
+
+	@Value("${application.kafkaBootstrapServers}")
+	public String bootstrapServers;
+
+	public WDNAPKafkaProducer() {
+		props = util.loadKafkaProperties();
 		producer = new KafkaProducer<>(props);
 
 	}
 
-	public void publish(WDNAPMailNotificationObject WDNAPMailNotificationObject, ApplicationConfigParams config) {
+	public void publish(WDNAPMailNotificationObject WDNAPMailNotificationObject) {
 
 		String topicName = "NotificationTopic";
-		String key = Util.getKafkaUniqueRecordKey(WDNAPMailNotificationObject.getFrom(), config.getIdServiceURL());
+		String key = Util.getKafkaUniqueRecordKey(WDNAPMailNotificationObject.getFrom(),idServiceURL);
 		StringBuffer sBuffer = new StringBuffer();
 		sBuffer.append("From:" + WDNAPMailNotificationObject.getFrom() + "|");
 		sBuffer.append("To:" + WDNAPMailNotificationObject.getTo() + "|");
@@ -45,7 +59,7 @@ public class WDNAPKafkaProducer {
 		sBuffer.append("MailerInReplyToId:" + WDNAPMailNotificationObject.getMailerInReplyToId() + "|");
 
 		sBuffer.append("SubjectUUID:"
-				+ Util.getSubjectUUID(WDNAPMailNotificationObject.getSubject(), config.getSubjectUUIDServiceURL())
+				+ Util.getSubjectUUID(WDNAPMailNotificationObject.getSubject(), subjectUUIDServiceURL)
 				+ "|");
 
 		sBuffer.append("SentDate:" + WDNAPMailNotificationObject.getSentDate().toString() + "|");
@@ -109,12 +123,12 @@ public class WDNAPKafkaProducer {
 		 */
 	}
 
-	public void publish(WDNAPMailNotificationObject WDNAPMailNotificationObject, ApplicationConfigParams config,
+	public void publish(WDNAPMailNotificationObject WDNAPMailNotificationObject,
 						int threadId) {
 		//String topicName = "unix_alerts";
 		String topicName = "NotificationTopic";
-		String key = Util.getKafkaUniqueRecordKey(WDNAPMailNotificationObject.getFrom(), config.getIdServiceURL());
-		WDNAPMailNotificationObject.setConfigSubjectUUIDServiceURL(config.getSubjectUUIDServiceURL());
+		String key = Util.getKafkaUniqueRecordKey(WDNAPMailNotificationObject.getFrom(),idServiceURL);
+		WDNAPMailNotificationObject.setConfigSubjectUUIDServiceURL(subjectUUIDServiceURL);
 
 		String value = WDNAPMailNotificationObject.toString();
 
@@ -125,6 +139,14 @@ public class WDNAPKafkaProducer {
 			e.printStackTrace();
 			LOGGER.error("Exception in Posting Kafka message to : " + topicName);
 		}
+	}
+
+	public String getBootstrapServers() {
+		return bootstrapServers;
+	}
+
+	public void setBootstrapServers(String bootstrapServers) {
+		this.bootstrapServers = bootstrapServers;
 	}
 
 }

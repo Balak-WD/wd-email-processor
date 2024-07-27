@@ -103,7 +103,7 @@ public class EWSMailUtil {
 		return msgDataList;
 	}
 
-	public void processEmails(WDNAPKafkaProducer kp, ApplicationConfigParams config) {
+	public void processEmails(WDNAPKafkaProducer kp) {
 
 		try {
 
@@ -114,7 +114,7 @@ public class EWSMailUtil {
 			for (Item item : results) {
 
 				WDNAPMailNotificationObject obj = getCNAPObjectFromItem(item.getId());
-				kp.publish(obj, config);
+				kp.publish(obj);
 				System.out.println(obj);
 				item.delete(DeleteMode.HardDelete);
 			}

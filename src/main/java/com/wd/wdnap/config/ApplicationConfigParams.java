@@ -8,7 +8,7 @@ import com.wd.wdnap.utils.Util;
 import com.google.common.base.Strings;
 
 
-@ConfigurationProperties(prefix = "application")
+//@ConfigurationProperties(prefix = "application")
 public class ApplicationConfigParams {
 
 	// Defines the key for encryption algorithm

@@ -17,20 +17,16 @@ import com.wd.wdnap.email.service.WDNAPEmailService;
 @Component
 public class WDNAPMailReadScheduler {
 
+
 	@Autowired
-	private ApplicationConfigParams config;
 	private WDNAPEmailService cNAPEmailService;
+
+	@Autowired
 	private WDNAPEmailEWSService ewsEmailService;
 
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WDNAPMailReadScheduler.class);
-
-	@PostConstruct
-	public void init() {
-		if (cNAPEmailService == null)
-			cNAPEmailService = new WDNAPEmailService(config);
-	}
 
 	@Scheduled(fixedRate = 2000)
 	public void readNotificationEMails() {
@@ -39,9 +35,6 @@ public class WDNAPMailReadScheduler {
 
 		LOGGER.info("cnap-email-service Application START!");
 
-		if (cNAPEmailService == null) {
-			cNAPEmailService = new WDNAPEmailService(config);
-		}
 
 		cNAPEmailService.initAndFetch();
 
